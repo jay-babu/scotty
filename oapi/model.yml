@@ -1,0 +1,76 @@
+openapi: 3.0.0
+
+info:
+  title: Scotty
+  description: |
+    # Overview
+  version: 0.0.0
+
+servers:
+  - url: http://localhost:8080
+
+components:
+  schemas:
+    ScottyChatInput:
+      type: object
+      properties:
+        message:
+          type: string
+        user:
+          type: string
+        stream:
+          type: boolean
+          default: true
+      required: [ message ]
+    ScottyChatOutput:
+      type: object
+      properties:
+        messages:
+          type: array
+          items:
+            $ref: "#/components/schemas/Message"
+      required: [ messages ]
+    Message:
+      type: object
+
+      properties:
+        message:
+          type: string
+      required: [ message ]
+    Error:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+
+        message:
+          type: string
+      required:
+        - code
+        - message
+
+paths:
+  /scotty/v1/chat:
+    post:
+
+      description: |
+        Talk to Scotty
+      operationId: scottyChat
+      requestBody:
+        description: Talk to Scotty
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ScottyChatInput"
+      responses:
+        "200":
+          description: Scotty Replied!
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ScottyChatOutput"
+        "400":
+          description: Bad Request.
+        "5XX":
+          description: Unexpected error.
